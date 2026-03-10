@@ -10,7 +10,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
     return (
         <div className="gallery-section">
             <h2 style={{ marginBottom: '0.5rem', fontSize: '1.5rem' }}>Etsy'ye Hazır Varyasyonlar</h2>
-            <p className="text-muted">İşte ürün listelemeniz için oluşturulmuş 10 yaşam tarzı görseli.</p>
+            <p className="text-muted">İşte ürün listelemeniz için oluşturulmuş {images.length} yaşam tarzı görseli.</p>
 
             <div className="gallery-grid">
                 {images.map((img) => (

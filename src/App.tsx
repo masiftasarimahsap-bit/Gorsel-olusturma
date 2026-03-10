@@ -8,6 +8,7 @@ function App() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>('');
+  const [numImages, setNumImages] = useState<number>(10);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [progressStatus, setProgressStatus] = useState<string>('');
@@ -35,7 +36,7 @@ function App() {
       // 1. Upload the base image securely to Fal storage
       const imageUrl = await fal.storage.upload(file);
 
-      setProgressStatus('10 premium varyasyon oluşturuluyor... (Bu işlem biraz sürebilir)');
+      setProgressStatus(`${numImages} premium varyasyon oluşturuluyor... (Bu işlem biraz sürebilir)`);
 
       // In a real scenario we could make concurrent requests or sequential requests.
       // Easiest is to fire a loop of promises. We use the "photoroom" or "flux-subject" model pattern.
@@ -43,10 +44,9 @@ function App() {
       // Or we can use the "fal-ai/stable-diffusion-v3-medium/image-to-image", wait, the prompt asks for exactly 10 images.
       // So let's make 10 distinct requests (or a model that supports batch generation).
       // Since fal-ai uses `num_images` we might just pass `num_images: 10`, but some models limit it.
-      // E.g. flux only supports 1 image per request usually. We'll fire 10 requests concurrently.
+      // E.g. flux only supports 1 image per request usually. We'll fire N requests concurrently.
 
-      const NUM_IMAGES = 10;
-      const promises = Array.from({ length: NUM_IMAGES }).map(async (_, index) => {
+      const promises = Array.from({ length: numImages }).map(async (_, index) => {
         try {
           // For the sake of this prompt, using fal-ai/flux-subject / fal-ai/photoroom 
           // or fal-ai/nano-banana-2/edit as the API expects.
@@ -91,7 +91,7 @@ function App() {
     <div className="container" style={{ paddingBottom: '4rem' }}>
       <header className="header">
         <h1 className="text-gradient">Masif Special</h1>
-        <p>Tek bir ürün fotoğrafını Etsy algoritmasına uygun 10 premium yaşam tarzı karesine dönüştürün</p>
+        <p>Tek bir ürün fotoğrafını Etsy algoritmasına uygun dilediğiniz sayıda premium yaşam tarzı karesine dönüştürün</p>
       </header>
 
       <main className="main-content">
@@ -123,6 +123,23 @@ function App() {
               <span className="input-hint">Açıklamayı Etsy algoritması estetiği için otomatik olarak optimize ediyoruz.</span>
             </div>
 
+            <div className="form-group">
+              <label className="form-label" htmlFor="numImagesInput">Kaç Fotoğraf Oluşturulsun?</label>
+              <input
+                id="numImagesInput"
+                type="number"
+                min="1"
+                max="20"
+                className="form-control"
+                value={numImages}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  setNumImages(isNaN(val) ? 1 : Math.min(Math.max(val, 1), 20));
+                }}
+                style={{ padding: '0.5rem 1rem' }}
+              />
+            </div>
+
             <button
               className="btn btn-primary"
               onClick={handleGenerate}
@@ -134,7 +151,7 @@ function App() {
               ) : (
                 <>
                   <Sparkles size={20} />
-                  10 Fotoğraf Oluştur
+                  {numImages} Fotoğraf Oluştur
                 </>
               )}
             </button>
