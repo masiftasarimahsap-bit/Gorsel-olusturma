@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Sparkles } from 'lucide-react';
 import { ImageUploader } from './components/ImageUploader';
 import { ImageGallery } from './components/ImageGallery';
+import { VideoGallery } from './components/VideoGallery';
 import { fal } from './lib/fal';
 
 function App() {
@@ -9,10 +10,12 @@ function App() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>('');
   const [numImages, setNumImages] = useState<number>(10);
+  const [generateVideo, setGenerateVideo] = useState<boolean>(false);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [progressStatus, setProgressStatus] = useState<string>('');
   const [generatedImages, setGeneratedImages] = useState<Array<{ url: string; index: number }>>([]);
+  const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
 
   // Clean up object URL when file changes
   useEffect(() => {
@@ -30,21 +33,14 @@ function App() {
 
     setIsGenerating(true);
     setGeneratedImages([]);
+    setGeneratedVideoUrl(null);
     setProgressStatus('Ürün fotoğrafı güvenli bir şekilde yükleniyor...');
 
     try {
-      // 1. Upload the base image securely to Fal storage
       const imageUrl = await fal.storage.upload(file);
 
+      // --- PHASE 1: IMAGE GENERATION ---
       setProgressStatus(`${numImages} premium varyasyon oluşturuluyor... (Bu işlem biraz sürebilir)`);
-
-      // In a real scenario we could make concurrent requests or sequential requests.
-      // Easiest is to fire a loop of promises. We use the "photoroom" or "flux-subject" model pattern.
-      // Here we will use "fal-ai/flux-subject" as an example of adding backgrounds to subjects.
-      // Or we can use the "fal-ai/stable-diffusion-v3-medium/image-to-image", wait, the prompt asks for exactly 10 images.
-      // So let's make 10 distinct requests (or a model that supports batch generation).
-      // Since fal-ai uses `num_images` we might just pass `num_images: 10`, but some models limit it.
-      // E.g. flux only supports 1 image per request usually. We'll fire N requests concurrently.
 
       const promises = Array.from({ length: numImages }).map(async (_, index) => {
         try {
@@ -75,9 +71,33 @@ function App() {
 
       const results = await Promise.all(promises);
       const validImages = results.filter((res): res is { url: string, index: number } => res !== null);
-
       setGeneratedImages(validImages);
-      setProgressStatus(`Tamamlandı! ${validImages.length} varyasyon oluşturuldu.`);
+
+      // --- PHASE 2: VIDEO GENERATION (Kling V3) ---
+      if (generateVideo) {
+        setProgressStatus('Kling V3 Pro ile yaşam tarzı videosu oluşturuluyor... (Bu işlem uzun sürebilir)');
+
+        try {
+          const videoResult = await fal.subscribe("fal-ai/kling-video/v3/pro/image-to-video", {
+            input: {
+              prompt: `Premium etsy product photography, lifestyle aesthetic: ${prompt}`,
+              start_image_url: imageUrl,
+              duration: "5",
+              generate_audio: false,
+              aspect_ratio: "16:9"
+            },
+            logs: true
+          });
+
+          if (videoResult.data && videoResult.data.video && videoResult.data.video.url) {
+            setGeneratedVideoUrl(videoResult.data.video.url);
+          }
+        } catch (videoError) {
+          console.error("Video generation failed:", videoError);
+        }
+      }
+
+      setProgressStatus(`Tamamlandı! ${validImages.length} varyasyon ${generatedVideoUrl ? 've 1 video ' : ''}oluşturuldu.`);
 
     } catch (error) {
       console.error("Generation failed:", error);
@@ -123,21 +143,53 @@ function App() {
               <span className="input-hint">Açıklamayı Etsy algoritması estetiği için otomatik olarak optimize ediyoruz.</span>
             </div>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="numImagesInput">Kaç Fotoğraf Oluşturulsun?</label>
-              <input
-                id="numImagesInput"
-                type="number"
-                min="1"
-                max="20"
-                className="form-control"
-                value={numImages}
-                onChange={(e) => {
-                  const val = parseInt(e.target.value);
-                  setNumImages(isNaN(val) ? 1 : Math.min(Math.max(val, 1), 20));
-                }}
-                style={{ padding: '0.5rem 1rem' }}
-              />
+            <div className="form-group" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              <div style={{ flex: 1 }}>
+                <label className="form-label" htmlFor="numImagesInput">Kaç Fotoğraf Oluşturulsun?</label>
+                <input
+                  id="numImagesInput"
+                  type="number"
+                  min="1"
+                  max="20"
+                  className="form-control"
+                  value={numImages}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    setNumImages(isNaN(val) ? 1 : Math.min(Math.max(val, 1), 20));
+                  }}
+                  style={{ padding: '0.5rem 1rem' }}
+                />
+              </div>
+
+              <div style={{ flex: 1 }}>
+                <label className="form-label">Video Oluşturulsun mu? (Kling V3)</label>
+                <div
+                  className="form-control"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    background: generateVideo ? 'rgba(123, 97, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                    borderColor: generateVideo ? 'var(--accent-color)' : 'var(--border-color)',
+                  }}
+                  onClick={() => setGenerateVideo(!generateVideo)}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '4px',
+                    border: '2px solid var(--accent-color)',
+                    marginRight: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: generateVideo ? 'var(--accent-color)' : 'transparent'
+                  }}>
+                    {generateVideo && <Sparkles size={14} color="white" />}
+                  </div>
+                  <span>{generateVideo ? 'Evet, Video da Üret' : 'Hayır, Sadece Fotoğraf'}</span>
+                </div>
+              </div>
             </div>
 
             <button
@@ -151,7 +203,7 @@ function App() {
               ) : (
                 <>
                   <Sparkles size={20} />
-                  {numImages} Fotoğraf Oluştur
+                  Üretimi Başlat ({numImages} Görsel {generateVideo ? '+ 1 Video' : ''})
                 </>
               )}
             </button>
@@ -169,6 +221,10 @@ function App() {
 
         {!isGenerating && generatedImages.length > 0 && (
           <ImageGallery images={generatedImages} />
+        )}
+
+        {!isGenerating && generatedVideoUrl && (
+          <VideoGallery videoUrl={generatedVideoUrl} />
         )}
       </main>
     </div>
