@@ -10,6 +10,11 @@ const PROMPT_TEMPLATES = [
     title: "Ahşap Mumluk Stüdyo Çekimi",
     prompt: "High-end studio product photo of a handmade beech wood candle holder, shot on pure white seamless background, softbox lighting from both sides, subtle soft shadow, ultra clean commercial look, product perfectly centered, realistic wood texture, macro level detail, luxury ecommerce photography, sharp focus",
     image: "/template-1.png"
+  },
+  {
+    title: "Siyah Arkaplan Stüdyo Çekimi",
+    prompt: "Luxury studio photography of handmade natural wood candle holder on deep matte black background, dramatic soft spotlight, cinematic shadow falloff, premium brand catalog style, ultra realistic texture, high contrast professional lighting, 85mm product lens, 2667x2000 resolution",
+    image: "/template-2.png"
   }
 ];
 
