@@ -5,6 +5,14 @@ import { ImageGallery } from './components/ImageGallery';
 import { VideoGallery } from './components/VideoGallery';
 import { fal } from './lib/fal';
 
+const PROMPT_TEMPLATES = [
+  {
+    title: "Ahşap Mumluk Stüdyo Çekimi",
+    prompt: "High-end studio product photo of a handmade beech wood candle holder, shot on pure white seamless background, softbox lighting from both sides, subtle soft shadow, ultra clean commercial look, product perfectly centered, realistic wood texture, macro level detail, luxury ecommerce photography, sharp focus",
+    image: "/template-1.png"
+  }
+];
+
 function App() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -130,6 +138,34 @@ function App() {
             <p className="text-muted" style={{ marginBottom: '1.5rem', fontSize: '0.9rem' }}>
               Ortam hakkında özel detaylar ekleyin. Yapay zekamız ürününüzü bu sahneye kusursuz bir şekilde entegre edecek.
             </p>
+
+            {/* Prompt Templates */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <p className="form-label" style={{ marginBottom: '0.75rem' }}>Örnek Şablonlar (Hızlı Seçim)</p>
+              <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                {PROMPT_TEMPLATES.map((tpl, i) => (
+                  <div
+                    key={i}
+                    onClick={() => setPrompt(tpl.prompt)}
+                    style={{
+                      minWidth: '120px',
+                      cursor: 'pointer',
+                      borderRadius: 'var(--radius-md)',
+                      overflow: 'hidden',
+                      border: prompt === tpl.prompt ? '2px solid var(--accent-color)' : '1px solid var(--border-color)',
+                      transition: 'all 0.2s ease',
+                      background: prompt === tpl.prompt ? 'rgba(123, 97, 255, 0.1)' : 'rgba(255,255,255,0.02)'
+                    }}
+                    className="template-card"
+                  >
+                    <img src={tpl.image} alt={tpl.title} style={{ width: '100%', height: '80px', objectFit: 'cover' }} />
+                    <div style={{ padding: '0.5rem', fontSize: '0.75rem', textAlign: 'center', fontWeight: 500, lineHeight: 1.2 }}>
+                      {tpl.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             <div className="form-group" style={{ flexGrow: 1 }}>
               <label className="form-label" htmlFor="promptInput">Ortam Özellikleri (Prompt)</label>
