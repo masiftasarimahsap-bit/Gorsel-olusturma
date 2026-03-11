@@ -163,31 +163,31 @@ function App() {
 
               <div style={{ flex: 1 }}>
                 <label className="form-label">Video Oluşturulsun mu? (Kling V3)</label>
-                <div
-                  className="form-control"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    background: generateVideo ? 'rgba(123, 97, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                    borderColor: generateVideo ? 'var(--accent-color)' : 'var(--border-color)',
-                  }}
-                  onClick={() => setGenerateVideo(!generateVideo)}
-                >
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '4px',
-                    border: '2px solid var(--accent-color)',
-                    marginRight: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: generateVideo ? 'var(--accent-color)' : 'transparent'
-                  }}>
-                    {generateVideo && <Sparkles size={14} color="white" />}
-                  </div>
-                  <span>{generateVideo ? 'Evet, Video da Üret' : 'Hayır, Sadece Fotoğraf'}</span>
+                <div style={{ display: 'flex', gap: '0.5rem', height: '100%' }}>
+                  <button
+                    className="btn"
+                    style={{
+                      flex: 1,
+                      background: generateVideo ? 'var(--accent-gradient)' : 'rgba(0, 0, 0, 0.2)',
+                      border: `1px solid ${generateVideo ? 'transparent' : 'var(--border-color)'}`,
+                      color: generateVideo ? 'white' : 'var(--text-muted)'
+                    }}
+                    onClick={() => setGenerateVideo(true)}
+                  >
+                    Evet (Video Üret)
+                  </button>
+                  <button
+                    className="btn"
+                    style={{
+                      flex: 1,
+                      background: !generateVideo ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.2)',
+                      border: `1px solid ${!generateVideo ? 'rgba(255, 255, 255, 0.2)' : 'var(--border-color)'}`,
+                      color: !generateVideo ? 'white' : 'var(--text-muted)'
+                    }}
+                    onClick={() => setGenerateVideo(false)}
+                  >
+                    Hayır (Sadece Fotoğraf)
+                  </button>
                 </div>
               </div>
             </div>
