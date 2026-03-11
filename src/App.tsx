@@ -15,6 +15,21 @@ const PROMPT_TEMPLATES = [
     title: "Siyah Arkaplan Stüdyo Çekimi",
     prompt: "Luxury studio photography of handmade natural wood candle holder on deep matte black background, dramatic soft spotlight, cinematic shadow falloff, premium brand catalog style, ultra realistic texture, high contrast professional lighting, 85mm product lens, 2667x2000 resolution",
     image: "/template-2.png"
+  },
+  {
+    title: "Soft Lifestyle Stüdyo",
+    prompt: "Professional studio lifestyle product photography, handmade beech wood candle holder on neutral beige studio background, soft diffused daylight simulation, elegant shadow, minimal modern aesthetic, interior decor magazine style, ultra realistic, high detail wood grain, 2667x2000",
+    image: "/template-3.png"
+  },
+  {
+    title: "Ultra Close Detay",
+    prompt: "Macro studio product photography of handmade beech wood candle holder, extreme wood grain detail, shallow depth of field, luxury product advertising style, soft studio lighting, ultra sharp focus on texture, blurred background, commercial catalog shot, 2667x2000",
+    image: "/template-4.png"
+  },
+  {
+    title: "Mumlu Dekoratif Versiyon",
+    prompt: "Professional studio photo of handmade beech wood candle holder with elegant candle placed inside, soft studio lighting, natural shadow, premium home decor catalog style, ultra realistic, clean seamless background, commercial ecommerce photography, 2667x2000",
+    image: "/template-5.png"
   }
 ];
 
