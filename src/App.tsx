@@ -148,18 +148,21 @@ function App() {
                     key={i}
                     onClick={() => setPrompt(tpl.prompt)}
                     style={{
-                      minWidth: '120px',
+                      minWidth: '140px',
+                      maxWidth: '140px',
                       cursor: 'pointer',
                       borderRadius: 'var(--radius-md)',
                       overflow: 'hidden',
                       border: prompt === tpl.prompt ? '2px solid var(--accent-color)' : '1px solid var(--border-color)',
                       transition: 'all 0.2s ease',
-                      background: prompt === tpl.prompt ? 'rgba(123, 97, 255, 0.1)' : 'rgba(255,255,255,0.02)'
+                      background: prompt === tpl.prompt ? 'rgba(123, 97, 255, 0.1)' : 'rgba(255,255,255,0.02)',
+                      display: 'flex',
+                      flexDirection: 'column'
                     }}
                     className="template-card"
                   >
-                    <img src={tpl.image} alt={tpl.title} style={{ width: '100%', height: '80px', objectFit: 'cover' }} />
-                    <div style={{ padding: '0.5rem', fontSize: '0.75rem', textAlign: 'center', fontWeight: 500, lineHeight: 1.2 }}>
+                    <img src={tpl.image} alt={tpl.title} style={{ width: '100%', height: '140px', objectFit: 'contain', background: '#fff' }} />
+                    <div style={{ padding: '0.75rem 0.5rem', fontSize: '0.8rem', textAlign: 'center', fontWeight: 500, lineHeight: 1.3, background: 'rgba(0,0,0,0.5)', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {tpl.title}
                     </div>
                   </div>
